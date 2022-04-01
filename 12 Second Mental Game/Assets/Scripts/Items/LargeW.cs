@@ -6,7 +6,7 @@ public class LargeW : MonoBehaviour
 {
     GameManager reftoManager;
     private string CurrentState;//Set, Holding, Collected
-    private float WaterValue;
+    private float WaterValue = 4f;
     private Bounds offset;
     // Start is called before the first frame update
     void Start()
@@ -14,7 +14,6 @@ public class LargeW : MonoBehaviour
         CurrentState = "Set";
         offset = this.GetComponent<SpriteRenderer>().bounds;
         offset.Expand(1.5f);
-        WaterValue = 4f;
     }
 
     // Update is called once per frame
@@ -26,6 +25,11 @@ public class LargeW : MonoBehaviour
         {
             //Sort Inv. State
             CurrentState = "Holding";
+        }
+
+        if (CurrentState == "Holding")
+        {
+            //Sort inv state
         }
     }
 }

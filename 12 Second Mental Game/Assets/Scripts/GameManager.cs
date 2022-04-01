@@ -151,6 +151,12 @@ public class GameManager : MonoBehaviour
                 ItemSpawn.GetComponent<SpriteRenderer>().sprite = Default; //Change sprite
                 ItemSpawn.GetComponent<SpriteRenderer>().color = new Color(1, 0.5f, 0, 1);
                 ItemLocation = Random.Range(1, 5);
+
+                SpawnLocation(1, CanSpawnMF1, FoodM1, FoodSpawnM);
+                SpawnLocation(2, CanSpawnMF2, FoodM2, FoodSpawnM);
+                SpawnLocation(3, CanSpawnMF3, FoodM3, FoodSpawnM);
+                SpawnLocation(4, CanSpawnMF4, FoodM4, FoodSpawnM);
+                /*
                 if (ItemLocation == 1)
                 {
                     if (CanSpawnMF1 == true)
@@ -186,7 +192,7 @@ public class GameManager : MonoBehaviour
                         CanSpawnMF4 = false;
                     }
                     else if (CanSpawnMF4 == false) FoodSpawnM++;
-                }
+                }*/
             }
         }
 
@@ -203,24 +209,9 @@ public class GameManager : MonoBehaviour
                 ItemSpawn.GetComponent<SpriteRenderer>().sprite = Default; //Change sprite
                 ItemSpawn.GetComponent<SpriteRenderer>().color = new Color(0.6f, 0.7f, 0, 1);
                 ItemLocation = Random.Range(1, 3);
-                if (ItemLocation == 1)
-                {
-                    if (CanSpawnLF1 == true)
-                    {
-                        ItemSpawn.transform.position = FoodL1;
-                        CanSpawnLF1 = false;
-                    }
-                    else if (CanSpawnLF1 == false) FoodSpawnL++;
-                }
-                if (ItemLocation == 2)
-                {
-                    if (CanSpawnLF2 == true)
-                    {
-                        ItemSpawn.transform.position = FoodL2;
-                        CanSpawnLF2 = false;
-                    }
-                    else if (CanSpawnLF2 == false) FoodSpawnL++;
-                }
+
+                SpawnLocation(1, CanSpawnLF1, FoodL1, FoodSpawnL);
+                SpawnLocation(2, CanSpawnLF2, FoodL2, FoodSpawnL);
             }
         }
 
@@ -237,60 +228,13 @@ public class GameManager : MonoBehaviour
                 ItemSpawn.GetComponent<SpriteRenderer>().sprite = Default; //Change sprite
                 ItemSpawn.GetComponent<SpriteRenderer>().color = new Color(0, 0.7f, 1, 1);
                 ItemLocation = Random.Range(1, 7);
-                if (ItemLocation == 1)
-                {
-                    if (CanSpawnSW1 == true)
-                    {
-                        ItemSpawn.transform.position = WaterS1;
-                        CanSpawnSW1 = false;
-                    }
-                    else if (CanSpawnSW1 == false) WaterSpawnS++;
-                }
-                if (ItemLocation == 2)
-                {
-                    if (CanSpawnSW2 == true)
-                    {
-                        ItemSpawn.transform.position = WaterS2;
-                        CanSpawnSW2 = false;
-                    }
-                    else if (CanSpawnSW2 == false) WaterSpawnS++;
-                }
-                if (ItemLocation == 3)
-                {
-                    if (CanSpawnSW3 == true)
-                    {
-                        ItemSpawn.transform.position = WaterS3;
-                        CanSpawnSW3 = false;
-                    }
-                    else if (CanSpawnSW3 == false) WaterSpawnS++;
-                }
-                if (ItemLocation == 4)
-                {
-                    if (CanSpawnSW4 == true)
-                    {
-                        ItemSpawn.transform.position = WaterS4;
-                        CanSpawnSW4 = false;
-                    }
-                    else if (CanSpawnSW4 == false) WaterSpawnS++;
-                }
-                if (ItemLocation == 5)
-                {
-                    if (CanSpawnSW5 == true)
-                    {
-                        ItemSpawn.transform.position = WaterS5;
-                        CanSpawnSW5 = false;
-                    }
-                    else if (CanSpawnSW5 == false) WaterSpawnS++;
-                }
-                if (ItemLocation == 6)
-                {
-                    if (CanSpawnSW6 == true)
-                    {
-                        ItemSpawn.transform.position = WaterS6;
-                        CanSpawnSW6 = false;
-                    }
-                    else if (CanSpawnSW6 == false) WaterSpawnS++;
-                }
+
+                SpawnLocation(1, CanSpawnSW1, WaterS1, WaterSpawnS);
+                SpawnLocation(2, CanSpawnSW2, WaterS2, WaterSpawnS);
+                SpawnLocation(3, CanSpawnSW3, WaterS3, WaterSpawnS);
+                SpawnLocation(4, CanSpawnSW4, WaterS4, WaterSpawnS);
+                SpawnLocation(5, CanSpawnSW5, WaterS5, WaterSpawnS);
+                SpawnLocation(6, CanSpawnSW6, WaterS6, WaterSpawnS);
             }
         }
         //Medium Water (50% Chance)
@@ -307,42 +251,13 @@ public class GameManager : MonoBehaviour
                 ItemSpawn.GetComponent<SpriteRenderer>().color = new Color(0, 0, 1, 1);
                 ItemLocation = Random.Range(1, 5);
 
-                /*
+                
                 SpawnLocation(1, CanSpawnMW1, WaterM1, WaterSpawnM);
                 SpawnLocation(2, CanSpawnMW2, WaterM2, WaterSpawnM);
                 SpawnLocation(3, CanSpawnMW3, WaterM3, WaterSpawnM);
-                */
-
-                if (ItemLocation == 1)
-                {
-                    if (CanSpawnMW1 == true)
-                    {
-                        ItemSpawn.transform.position = WaterM1;
-                        CanSpawnMW1 = false;
-                    }
-                    else if (CanSpawnMW1 == false) WaterSpawnM++;
-                }
-                if (ItemLocation == 2)
-                {
-                    if (CanSpawnMW2 == true)
-                    {
-                        ItemSpawn.transform.position = WaterM2;
-                        CanSpawnMW2 = false;
-                    }
-                    else if (CanSpawnMW2 == false) WaterSpawnM++;
-                }
-                if (ItemLocation == 3)
-                {
-                    if (CanSpawnMW3 == true)
-                    {
-                        ItemSpawn.transform.position = WaterM3;
-                        CanSpawnMW3 = false;
-                    }
-                    else if (CanSpawnMW3 == false) WaterSpawnM++;
-                }
             }
         }
-        /*
+        
         //Large Water (90% Chance)
         if (WaterSpawnL > 0)
         {
@@ -360,8 +275,8 @@ public class GameManager : MonoBehaviour
                 /*
                 SpawnLocation(1, CanSpawnLW1, WaterL1, WaterSpawnL);
                 SpawnLocation(2, CanSpawnLW2, WaterL2, WaterSpawnL);
+                */
                 
-
                 if (ItemLocation == 1)
                 {
                     if (CanSpawnLW1 == true)
@@ -388,7 +303,7 @@ public class GameManager : MonoBehaviour
 
             //Special
 
-        }*/
+        }
     }
     
     private void SetUp()
@@ -446,14 +361,14 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void ItemGeneration(string _itemName, Vector4 _spriteColor) //figure out how to add script
+    private void ItemGeneration(string _itemName, Color _spriteColor, int _randomMax) //figure out how to add script
     {
         ItemSpawn = new GameObject("MediumWater");
         ItemSpawn.AddComponent<SpriteRenderer>();
         ItemSpawn.AddComponent<MediumW>();
         ItemSpawn.GetComponent<SpriteRenderer>().sprite = Default; //Change sprite
-        ItemSpawn.GetComponent<SpriteRenderer>().color = new Color(0, 0, 1, 1);
-        ItemLocation = Random.Range(1, 5);
+        //ItemSpawn.GetComponent<SpriteRenderer>().color = new (_spriteColor);
+        ItemLocation = Random.Range(1, _randomMax);
     }
     private void InvManager()
     {
