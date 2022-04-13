@@ -22,10 +22,10 @@ public class SmallW : MonoBehaviour
     {
         if (CurrentState == "Set" && this.transform.position == new Vector3(0, 0, 0)) Destroy(this.gameObject);
 
-        if (reftoManager.Player.GetComponent<SpriteRenderer>().bounds.Intersects(offset))
+        /*if (reftoManager.Player.GetComponent<SpriteRenderer>().bounds.Intersects(offset))
         {
             //Sort Inv. State
             CurrentState = "Holding";
-        }
+        }*/
     }
 }

@@ -6,7 +6,7 @@ public class SmallF : MonoBehaviour
 {
     GameManager reftoManager;
     private string CurrentState;//Set, Holding, Collected
-    private float FoodValue;
+    private float FoodValue = 1.5f;
     private Bounds offset;
     // Start is called before the first frame update
     void Start()
@@ -14,7 +14,6 @@ public class SmallF : MonoBehaviour
         CurrentState = "Set";
         offset = this.GetComponent<SpriteRenderer>().bounds;
         offset.Expand(1.5f);
-        FoodValue = 1.5f;
     }
 
     // Update is called once per frame
@@ -22,10 +21,10 @@ public class SmallF : MonoBehaviour
     {
         if (CurrentState == "Set" && this.transform.position == new Vector3(0, 0, 0)) Destroy(this.gameObject);
 
-        if (reftoManager.Player.GetComponent<SpriteRenderer>().bounds.Intersects(offset))
+        /*if (reftoManager.Player.GetComponent<SpriteRenderer>().bounds.Intersects(offset))
         {
             //Sort Inv. State
             CurrentState = "Holding";
-        }
+        }*/
     }
 }

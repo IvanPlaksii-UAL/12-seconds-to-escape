@@ -5,12 +5,12 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public string GameState, //Reset, PlayAgain, Menu, Items, HowTo, Playable, Result, Score
-        SortState;
+        SortState; //Pickup, Empty, Set, Sort
     public float Food, Water, MoveSpeed;
-    public int DaysSurvived, Highscore, FrameCount, Timer, SlotSelected;
+    public int DaysSurvived, Highscore, FrameCount, Timer, SlotSelected, emptySlots;
     public int FoodSpawnS, FoodSpawnM, FoodSpawnL, WaterSpawnS, WaterSpawnM, WaterSpawnL, CardSpawn, NoteSpawn, Roll, ItemLocation;
     private bool SpecialSpawnW, SpecialSpawnF, CanSpawnSF1, CanSpawnSF2, CanSpawnSF3, CanSpawnSF4, CanSpawnSF5, CanSpawnSF6, CanSpawnMF1, CanSpawnMF2, CanSpawnMF3, CanSpawnMF4, CanSpawnLF1, CanSpawnLF2, CanSpawnSW1, CanSpawnSW2, CanSpawnSW3, CanSpawnSW4, CanSpawnSW5, CanSpawnSW6, CanSpawnMW1, CanSpawnMW2, CanSpawnMW3, CanSpawnLW1, CanSpawnLW2;
-    public GameObject PlayAreaMain, PlayAreaHead, Player, CameraObject, ItemSpawn;
+    public GameObject PlayAreaMain, PlayAreaHead, Player, CameraObject, ItemSpawn, invSelector;
     Vector3 FoodS1, FoodS2, FoodS3, FoodS4, FoodS5, FoodS6, FoodM1, FoodM2, FoodM3, FoodM4, FoodL1, FoodL2, WaterS1, WaterS2, WaterS3, WaterS4, WaterS5, WaterS6, WaterM1, WaterM2, WaterM3, WaterL1, WaterL2;
     public Camera myCamera;
     public Sprite Default;
@@ -20,7 +20,9 @@ public class GameManager : MonoBehaviour
         Application.targetFrameRate = 60;
         GameState = "Reset";
         Highscore = 0; 
-        MoveSpeed = 0.4f;
+        MoveSpeed = 0.35f;
+        emptySlots = 4;
+        SlotSelected = 1;
         SpawnPositionSet();
     }
 
@@ -41,7 +43,7 @@ public class GameManager : MonoBehaviour
         {
             Spawns();
             //add load screen
-            if (FoodSpawnS == 0 && FoodSpawnM == 0 && FoodSpawnL == 0 && WaterSpawnS == 0 && WaterSpawnM == 0 && WaterSpawnL == 0 && CardSpawn == 0 && NoteSpawn == 0 && SpecialSpawnF == true && SpecialSpawnW == true) GameState = "Playable";
+            if (FoodSpawnS == 0 && FoodSpawnM == 0 && FoodSpawnL == 0 && WaterSpawnS == 0 && WaterSpawnM == 0 && WaterSpawnL == 0 /*&& CardSpawn == 0 && NoteSpawn == 0 && SpecialSpawnF == true && SpecialSpawnW == true*/) GameState = "Playable";
         }
 
         if (GameState == "Playable")
@@ -80,60 +82,13 @@ public class GameManager : MonoBehaviour
                 ItemSpawn.GetComponent<SpriteRenderer>().sprite = Default; //Change sprite
                 ItemSpawn.GetComponent<SpriteRenderer>().color = new Color(0, 1, 0, 1);
                 ItemLocation = Random.Range(1, 7);
-                if (ItemLocation == 1)
-                {
-                    if (CanSpawnSF1 == true)
-                    {
-                        ItemSpawn.transform.position = FoodS1;
-                        CanSpawnSF1 = false;
-                    }
-                    else if (CanSpawnSF1 == false) FoodSpawnS++;
-                }
-                if (ItemLocation == 2)
-                {
-                    if (CanSpawnSF2 == true)
-                    {
-                        ItemSpawn.transform.position = FoodS2;
-                        CanSpawnSF2 = false;
-                    }
-                    else if (CanSpawnSF2 == false) FoodSpawnS++;
-                }
-                if (ItemLocation == 3)
-                {
-                    if (CanSpawnSF3 == true)
-                    {
-                        ItemSpawn.transform.position = FoodS3;
-                        CanSpawnSF3 = false;
-                    }
-                    else if (CanSpawnSF3 == false) FoodSpawnS++;
-                }
-                if (ItemLocation == 4)
-                {
-                    if (CanSpawnSF4 == true)
-                    {
-                        ItemSpawn.transform.position = FoodS4;
-                        CanSpawnSF4 = false;
-                    }
-                    else if (CanSpawnSF4 == false) FoodSpawnS++;
-                }
-                if (ItemLocation == 5)
-                {
-                    if (CanSpawnSF5 == true)
-                    {
-                        ItemSpawn.transform.position = FoodS5;
-                        CanSpawnSF5 = false;
-                    }
-                    else if (CanSpawnSF5 == false) FoodSpawnS++;
-                }
-                if (ItemLocation == 6)
-                {
-                    if (CanSpawnSF6 == true)
-                    {
-                        ItemSpawn.transform.position = FoodS6;
-                        CanSpawnSF6 = false;
-                    }
-                    else if (CanSpawnSF6 == false) FoodSpawnS++;
-                }
+
+                SpawnLocation(1, CanSpawnSF1, FoodS1, FoodSpawnS);
+                SpawnLocation(2, CanSpawnSF2, FoodS2, FoodSpawnS);
+                SpawnLocation(3, CanSpawnSF3, FoodS3, FoodSpawnS);
+                SpawnLocation(4, CanSpawnSF4, FoodS4, FoodSpawnS);
+                SpawnLocation(5, CanSpawnSF5, FoodS5, FoodSpawnS);
+                SpawnLocation(6, CanSpawnSF6, FoodS6, FoodSpawnS);
             }
         }
 
@@ -156,43 +111,6 @@ public class GameManager : MonoBehaviour
                 SpawnLocation(2, CanSpawnMF2, FoodM2, FoodSpawnM);
                 SpawnLocation(3, CanSpawnMF3, FoodM3, FoodSpawnM);
                 SpawnLocation(4, CanSpawnMF4, FoodM4, FoodSpawnM);
-                /*
-                if (ItemLocation == 1)
-                {
-                    if (CanSpawnMF1 == true)
-                    {
-                        ItemSpawn.transform.position = FoodM1;
-                        CanSpawnMF1 = false;
-                    }
-                    else if (CanSpawnMF1 == false) FoodSpawnM++;
-                }
-                if (ItemLocation == 2)
-                {
-                    if (CanSpawnMF2 == true)
-                    {
-                        ItemSpawn.transform.position = FoodM2;
-                        CanSpawnMF2 = false;
-                    }
-                    else if (CanSpawnMF2 == false) FoodSpawnM++;
-                }
-                if (ItemLocation == 3)
-                {
-                    if (CanSpawnMF3 == true)
-                    {
-                        ItemSpawn.transform.position = FoodM3;
-                        CanSpawnMF3 = false;
-                    }
-                    else if (CanSpawnMF3 == false) FoodSpawnM++;
-                }
-                if (ItemLocation == 4)
-                {
-                    if (CanSpawnMF4 == true)
-                    {
-                        ItemSpawn.transform.position = FoodM4;
-                        CanSpawnMF4 = false;
-                    }
-                    else if (CanSpawnMF4 == false) FoodSpawnM++;
-                }*/
             }
         }
 
@@ -249,7 +167,7 @@ public class GameManager : MonoBehaviour
                 ItemSpawn.AddComponent<MediumW>();
                 ItemSpawn.GetComponent<SpriteRenderer>().sprite = Default; //Change sprite
                 ItemSpawn.GetComponent<SpriteRenderer>().color = new Color(0, 0, 1, 1);
-                ItemLocation = Random.Range(1, 5);
+                ItemLocation = Random.Range(1, 4);
 
                 
                 SpawnLocation(1, CanSpawnMW1, WaterM1, WaterSpawnM);
@@ -265,6 +183,7 @@ public class GameManager : MonoBehaviour
             Roll = Random.Range(1, 101);
             if (Roll < 91)
             {
+                print("waterL");
                 ItemSpawn = new GameObject("LargeWater");
                 ItemSpawn.AddComponent<SpriteRenderer>();
                 ItemSpawn.AddComponent<LargeW>();
@@ -272,29 +191,8 @@ public class GameManager : MonoBehaviour
                 ItemSpawn.GetComponent<SpriteRenderer>().color = new Color(0.3f, 0, 1f, 1);
                 ItemLocation = Random.Range(1, 3);
 
-                /*
                 SpawnLocation(1, CanSpawnLW1, WaterL1, WaterSpawnL);
                 SpawnLocation(2, CanSpawnLW2, WaterL2, WaterSpawnL);
-                */
-                
-                if (ItemLocation == 1)
-                {
-                    if (CanSpawnLW1 == true)
-                    {
-                        ItemSpawn.transform.position = WaterL1;
-                        CanSpawnLW1 = false;
-                    }
-                    else if (CanSpawnLW1 == false) WaterSpawnL++;
-                }
-                if (ItemLocation == 2)
-                {
-                    if (CanSpawnLW2 == true)
-                    {
-                        ItemSpawn.transform.position = WaterL2;
-                        CanSpawnLW2 = false;
-                    }
-                    else if (CanSpawnLW2 == false) WaterSpawnL++;
-                }
             }
     
             //Notes (33% Chance)
@@ -341,6 +239,8 @@ public class GameManager : MonoBehaviour
         CanSpawnMW1 = true;
         CanSpawnMW2 = true;
         CanSpawnMW3 = true;
+        CanSpawnLW1 = true;
+        CanSpawnLW2 = true;
         DaysSurvived = 0;
         Timer = 12;
         FrameCount = 0;
@@ -361,7 +261,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void ItemGeneration(string _itemName, Color _spriteColor, int _randomMax) //figure out how to add script
+    private void ItemGeneration(string _itemName, Color _spriteColor, int _randomMax) //figure out how to add scripts and change color variable
     {
         ItemSpawn = new GameObject("MediumWater");
         ItemSpawn.AddComponent<SpriteRenderer>();
@@ -393,23 +293,23 @@ public class GameManager : MonoBehaviour
             SlotSelected = 5;
         }
 
-
-        /*if (SlotSelected == 1)
+        //Not needed unless adding drop feature
+        if (SlotSelected == 1)
         {
-            InvSelector.transform.position = new Vector3(myCamera.transform.position.x - 8, myCamera.transform.position.y + 4, 1);
+            invSelector.transform.position = new Vector3(myCamera.transform.position.x - 12, myCamera.transform.position.y + 6, 0);
         }
         if (SlotSelected == 2)
         {
-            InvSelector.transform.position = new Vector3(myCamera.transform.position.x - 7, myCamera.transform.position.y + 4, 1);
+            invSelector.transform.position = new Vector3(myCamera.transform.position.x - 10, myCamera.transform.position.y + 6, 0);
         }
         if (SlotSelected == 3)
         {
-            InvSelector.transform.position = new Vector3(myCamera.transform.position.x - 6, myCamera.transform.position.y + 4, 1);
+            invSelector.transform.position = new Vector3(myCamera.transform.position.x - 8, myCamera.transform.position.y + 6, 0);
         }
         if (SlotSelected == 4)
         {
-            InvSelector.transform.position = new Vector3(myCamera.transform.position.x - 5, myCamera.transform.position.y + 4, 1);
-        }*/
+            invSelector.transform.position = new Vector3(myCamera.transform.position.x - 6, myCamera.transform.position.y + 6, 0);
+        }
 
 
         //Inventory Manager
