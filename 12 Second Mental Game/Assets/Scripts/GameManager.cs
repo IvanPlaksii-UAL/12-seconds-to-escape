@@ -4,13 +4,12 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public string GameState, //Reset, PlayAgain, Menu, Items, HowTo, Playable, Result, Score
-        SortState; //Pickup, Empty, Set, Sort
-    public float Food, Water, MoveSpeed;
-    public int DaysSurvived, Highscore, FrameCount, Timer, SlotSelected, emptySlots;
-    public int FoodSpawnS, FoodSpawnM, FoodSpawnL, WaterSpawnS, WaterSpawnM, WaterSpawnL, CardSpawn, NoteSpawn, Roll, ItemLocation;
+    public string GameState; //Reset, PlayAgain, Menu, Items, HowTo, Playable, Result, Score
+    public float Food, Water, moveSpeed, carryWeight;
+    public int daysSurvived, highScore, frameCount, Timer;
+    public int foodSpawnS, FoodSpawnM, FoodSpawnL, WaterSpawnS, WaterSpawnM, WaterSpawnL, CardSpawn, NoteSpawn, Roll, ItemLocation;
     private bool SpecialSpawnW, SpecialSpawnF, CanSpawnSF1, CanSpawnSF2, CanSpawnSF3, CanSpawnSF4, CanSpawnSF5, CanSpawnSF6, CanSpawnMF1, CanSpawnMF2, CanSpawnMF3, CanSpawnMF4, CanSpawnLF1, CanSpawnLF2, CanSpawnSW1, CanSpawnSW2, CanSpawnSW3, CanSpawnSW4, CanSpawnSW5, CanSpawnSW6, CanSpawnMW1, CanSpawnMW2, CanSpawnMW3, CanSpawnLW1, CanSpawnLW2;
-    public GameObject PlayAreaMain, PlayAreaHead, Player, CameraObject, ItemSpawn, invSelector;
+    public GameObject PlayAreaMain, PlayAreaHead, Player, CameraObject, ItemSpawn, Backpack, weightBar;
     Vector3 FoodS1, FoodS2, FoodS3, FoodS4, FoodS5, FoodS6, FoodM1, FoodM2, FoodM3, FoodM4, FoodL1, FoodL2, WaterS1, WaterS2, WaterS3, WaterS4, WaterS5, WaterS6, WaterM1, WaterM2, WaterM3, WaterL1, WaterL2;
     public Camera myCamera;
     public Sprite Default;
@@ -19,10 +18,8 @@ public class GameManager : MonoBehaviour
     {
         Application.targetFrameRate = 60;
         GameState = "Reset";
-        Highscore = 0; 
-        MoveSpeed = 0.35f;
-        emptySlots = 4;
-        SlotSelected = 1;
+        highScore = 0; 
+        moveSpeed = 0.35f;
         SpawnPositionSet();
     }
 
@@ -43,7 +40,7 @@ public class GameManager : MonoBehaviour
         {
             Spawns();
             //add load screen
-            if (FoodSpawnS == 0 && FoodSpawnM == 0 && FoodSpawnL == 0 && WaterSpawnS == 0 && WaterSpawnM == 0 && WaterSpawnL == 0 /*&& CardSpawn == 0 && NoteSpawn == 0 && SpecialSpawnF == true && SpecialSpawnW == true*/) GameState = "Playable";
+            if (foodSpawnS == 0 && FoodSpawnM == 0 && FoodSpawnL == 0 && WaterSpawnS == 0 && WaterSpawnM == 0 && WaterSpawnL == 0 /*&& CardSpawn == 0 && NoteSpawn == 0 && SpecialSpawnF == true && SpecialSpawnW == true*/) GameState = "Playable";
         }
 
         if (GameState == "Playable")
@@ -57,11 +54,11 @@ public class GameManager : MonoBehaviour
 
     private void TimeKeeper()
     {
-        FrameCount++;
-        if (FrameCount == 60)
+        frameCount++;
+        if (frameCount == 60)
         {
             Timer--;
-            FrameCount = 0;
+            frameCount = 0;
         }
 
         Countdown.text = ($"Time:{Timer}");
@@ -70,9 +67,9 @@ public class GameManager : MonoBehaviour
     private void Spawns()
     {
         //Small Food (66% Chance)
-        if (FoodSpawnS > 0)
+        if (foodSpawnS > 0)
         {
-            FoodSpawnS--;
+            foodSpawnS--;
             Roll = Random.Range(1, 101);
             if (Roll < 67)
             {
@@ -83,15 +80,14 @@ public class GameManager : MonoBehaviour
                 ItemSpawn.GetComponent<SpriteRenderer>().color = new Color(0, 1, 0, 1);
                 ItemLocation = Random.Range(1, 7);
 
-                SpawnLocation(1, CanSpawnSF1, FoodS1, FoodSpawnS);
-                SpawnLocation(2, CanSpawnSF2, FoodS2, FoodSpawnS);
-                SpawnLocation(3, CanSpawnSF3, FoodS3, FoodSpawnS);
-                SpawnLocation(4, CanSpawnSF4, FoodS4, FoodSpawnS);
-                SpawnLocation(5, CanSpawnSF5, FoodS5, FoodSpawnS);
-                SpawnLocation(6, CanSpawnSF6, FoodS6, FoodSpawnS);
+                SpawnLocation(1, CanSpawnSF1, FoodS1, foodSpawnS);
+                SpawnLocation(2, CanSpawnSF2, FoodS2, foodSpawnS);
+                SpawnLocation(3, CanSpawnSF3, FoodS3, foodSpawnS);
+                SpawnLocation(4, CanSpawnSF4, FoodS4, foodSpawnS);
+                SpawnLocation(5, CanSpawnSF5, FoodS5, foodSpawnS);
+                SpawnLocation(6, CanSpawnSF6, FoodS6, foodSpawnS);
             }
         }
-
 
         //Medium Food (30% Chance)
         if (FoodSpawnM > 0)
@@ -166,7 +162,7 @@ public class GameManager : MonoBehaviour
                 ItemSpawn.AddComponent<SpriteRenderer>();
                 ItemSpawn.AddComponent<MediumW>();
                 ItemSpawn.GetComponent<SpriteRenderer>().sprite = Default; //Change sprite
-                ItemSpawn.GetComponent<SpriteRenderer>().color = new Color(0, 0, 1, 1);
+                ItemSpawn.GetComponent<SpriteRenderer>().color = new Color(0, 0, 1, 1); 
                 ItemLocation = Random.Range(1, 4);
 
                 
@@ -208,7 +204,7 @@ public class GameManager : MonoBehaviour
     {
         Food = 0;
         Water = 0;
-        FoodSpawnS = 6;
+        foodSpawnS = 6;
         FoodSpawnM = 4;
         FoodSpawnL = 2;
         WaterSpawnS = 6;
@@ -241,9 +237,10 @@ public class GameManager : MonoBehaviour
         CanSpawnMW3 = true;
         CanSpawnLW1 = true;
         CanSpawnLW2 = true;
-        DaysSurvived = 0;
+        daysSurvived = 0;
         Timer = 12;
-        FrameCount = 0;
+        frameCount = 0;
+        carryWeight = 0;
         GameState = "Spawns";
     }
 
@@ -253,103 +250,17 @@ public class GameManager : MonoBehaviour
         {
             if (_canSpawn == true)
             {
-                print("spawned");
                 ItemSpawn.transform.position = _spawnLocation;
                 _canSpawn = false;
             }
             else if (_canSpawn == false) spawnType++;
         }
     }
-
-    private void ItemGeneration(string _itemName, Color _spriteColor, int _randomMax) //figure out how to add scripts and change color variable
-    {
-        ItemSpawn = new GameObject("MediumWater");
-        ItemSpawn.AddComponent<SpriteRenderer>();
-        ItemSpawn.AddComponent<MediumW>();
-        ItemSpawn.GetComponent<SpriteRenderer>().sprite = Default; //Change sprite
-        //ItemSpawn.GetComponent<SpriteRenderer>().color = new (_spriteColor);
-        ItemLocation = Random.Range(1, _randomMax);
-    }
     private void InvManager()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            SlotSelected = 1;
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            SlotSelected = 2;
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            SlotSelected = 3;
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha4))
-        {
-            SlotSelected = 4;
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha5))
-        {
-            SlotSelected = 5;
-        }
+        weightBar.transform.localScale = new Vector3((5 * (carryWeight / 20)), 0.5f, 1);
 
-        //Not needed unless adding drop feature
-        if (SlotSelected == 1)
-        {
-            invSelector.transform.position = new Vector3(myCamera.transform.position.x - 12, myCamera.transform.position.y + 6, 0);
-        }
-        if (SlotSelected == 2)
-        {
-            invSelector.transform.position = new Vector3(myCamera.transform.position.x - 10, myCamera.transform.position.y + 6, 0);
-        }
-        if (SlotSelected == 3)
-        {
-            invSelector.transform.position = new Vector3(myCamera.transform.position.x - 8, myCamera.transform.position.y + 6, 0);
-        }
-        if (SlotSelected == 4)
-        {
-            invSelector.transform.position = new Vector3(myCamera.transform.position.x - 6, myCamera.transform.position.y + 6, 0);
-        }
-
-
-        //Inventory Manager
-        if (SortState == "Idle")
-        {
-
-        }
-        /*if (SortState == "Pickup")
-        {
-            //Checking if slot is free
-            if (inv1.CurrentState == "Empty")
-            {
-                inv1.CurrentState = "Set";
-                SortState = "Sort";
-            }
-            else if (inv2.CurrentState == "Empty")
-            {
-                inv2.CurrentState = "Set";
-                SortState = "Sort";
-            }
-            else if (inv3.CurrentState == "Empty")
-            {
-                inv3.CurrentState = "Set";
-                SortState = "Sort";
-            }
-            else if (inv4.CurrentState == "Empty")
-            {
-                inv4.CurrentState = "Set";
-                SortState = "Sort";
-            }
-            else if (inv5.CurrentState == "Empty")
-            {
-                inv5.CurrentState = "Set";
-                SortState = "Sort";
-            }
-            else
-            {
-                print("No Space");
-            }
-        }*/
+        Backpack.transform.position = new Vector3(myCamera.transform.position.x + 9.5f, myCamera.transform.position.y - 4, myCamera.transform.position.z + 10);
     }
     private void PlayerControls()
     {
@@ -358,19 +269,19 @@ public class GameManager : MonoBehaviour
         {
             if (Input.GetKey(KeyCode.W))
             {
-                Player.transform.position += new Vector3(0, MoveSpeed, 0);
+                Player.transform.position += new Vector3(0, moveSpeed, 0);
             }
             if (Input.GetKey(KeyCode.S))
             {
-                Player.transform.position -= new Vector3(0, MoveSpeed, 0);
+                Player.transform.position -= new Vector3(0, moveSpeed, 0);
             }
             if (Input.GetKey(KeyCode.D))
             {
-                Player.transform.position += new Vector3(MoveSpeed, 0, 0);
+                Player.transform.position += new Vector3(moveSpeed, 0, 0);
             }
             if (Input.GetKey(KeyCode.A))
             {
-                Player.transform.position -= new Vector3(MoveSpeed, 0, 0);
+                Player.transform.position -= new Vector3(moveSpeed, 0, 0);
             }
         }
 
