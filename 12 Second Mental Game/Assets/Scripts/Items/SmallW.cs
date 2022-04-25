@@ -5,9 +5,11 @@ using UnityEngine;
 public class SmallW : MonoBehaviour
 {
     GameManager reftoManager;
-    private string currentState;//Set, Holding, Collected
-    private float foodValue = 1.5f, randomX, randomY;
+    public string currentState;//Set, Holding, Thrown, Collected
+    private float itemValue = 1f, randomX, randomY;
     private int itemWeight = 4;
+    private int pickupOrder;
+    private int throwTime;
     private Bounds offset;
     bool invSet, carrying;
     // Start is called before the first frame update
@@ -16,7 +18,7 @@ public class SmallW : MonoBehaviour
         reftoManager = FindObjectOfType<GameManager>();
         currentState = "Set";
         offset = this.GetComponent<SpriteRenderer>().bounds;
-        offset.Expand(1);
+        offset.Expand(0.3f);
         invSet = false;
         carrying = false;
     }
@@ -26,10 +28,15 @@ public class SmallW : MonoBehaviour
     {
         if (currentState == "Set" && this.transform.position == new Vector3(0, 0, 0)) Destroy(this.gameObject);
 
+        //colission detection
+        if (reftoManager.Player.GetComponent<SpriteRenderer>().bounds.Intersects(offset)) print("touching");
+
         if (currentState == "Set")
         {
-            if (reftoManager.Player.GetComponent<SpriteRenderer>().bounds.Intersects(offset) && Input.GetKeyDown(KeyCode.Space))
+            if (reftoManager.Player.GetComponent<SpriteRenderer>().bounds.Intersects(offset) && (reftoManager.carryWeight + itemWeight < 20) && Input.GetKeyDown(KeyCode.Space))
             {
+                pickupOrder = reftoManager.pickupID;
+                reftoManager.pickupID++;
                 currentState = "Holding";
             }
         }
@@ -47,6 +54,7 @@ public class SmallW : MonoBehaviour
             if (currentState == "Holding") GetComponent<SpriteRenderer>().sortingOrder = 8;
             else GetComponent<SpriteRenderer>().sortingOrder = 0;
 
+        //Carrying Items
         if (currentState == "Holding")
         {
             if (invSet == false)
@@ -56,8 +64,40 @@ public class SmallW : MonoBehaviour
                 invSet = true;
             }
             this.transform.position = new Vector3(reftoManager.myCamera.transform.position.x + randomX, reftoManager.myCamera.transform.position.y + randomY, 0);
-
-             //if (Input.GetKeyDown(KeyCode.Space)) currentState = "Set";
         }
+
+        //Item Dropping
+        if (Input.GetKeyDown(KeyCode.Return) && pickupOrder == (reftoManager.pickupID-1))
+        {
+            //State Reset
+            invSet = false;
+            reftoManager.pickupID--;
+            throwTime = 15;
+            this.transform.position = new Vector3(reftoManager.Player.transform.position.x, reftoManager.Player.transform.position.y, reftoManager.Player.transform.position.z);
+            currentState = "Thrown";
+        }
+
+        //Item Throwing
+        if (currentState == "Thrown" && throwTime > 0)
+        {
+            throwTime--;
+            if (reftoManager.facing == "N") this.transform.position += new Vector3(0, 0.3f, 0);
+            if (reftoManager.facing == "E") this.transform.position += new Vector3(0.3f, 0, 0);
+            if (reftoManager.facing == "S") this.transform.position -= new Vector3(0, 0.3f, 0);
+            if (reftoManager.facing == "W") this.transform.position -= new Vector3(0.3f, 0, 0);
+            if (reftoManager.facing == "NE") this.transform.position += new Vector3(0.3f, 0.3f, 0);
+            if (reftoManager.facing == "SE") this.transform.position += new Vector3(0.3f, -0.3f, 0);
+            if (reftoManager.facing == "SW") this.transform.position += new Vector3(-0.3f, -0.3f, 0);
+            if (reftoManager.facing == "NW") this.transform.position += new Vector3(-0.3f, 0.3f, 0);
+        }
+        if (currentState == "Thrown" && throwTime == 0) currentState = "Set";
+
+        if (this.GetComponent<SpriteRenderer>().bounds.Intersects(reftoManager.exitZone.GetComponent<SpriteRenderer>().bounds) && currentState == "Thrown")
+        {
+            reftoManager.Water = reftoManager.Water + itemValue;
+            currentState = "Collected";
+        }
+
+        if (currentState == "Collected") Destroy(this.gameObject);
     }
 }

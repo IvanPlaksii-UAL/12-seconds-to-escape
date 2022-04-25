@@ -4,16 +4,17 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public string GameState; //Reset, PlayAgain, Menu, Items, HowTo, Playable, Result, Score
+    public string GameState;//Reset, PlayAgain, Menu, Items, HowTo, Playable, Result, Score
+    public string facing; //N, E, S, W, NE, SE, SW, NW
     public float Food, Water, moveSpeed, carryWeight;
     public int daysSurvived, highScore, frameCount, Timer;
-    public int foodSpawnS, FoodSpawnM, FoodSpawnL, WaterSpawnS, WaterSpawnM, WaterSpawnL, CardSpawn, NoteSpawn, Roll, ItemLocation;
-    private bool SpecialSpawnW, SpecialSpawnF, CanSpawnSF1, CanSpawnSF2, CanSpawnSF3, CanSpawnSF4, CanSpawnSF5, CanSpawnSF6, CanSpawnMF1, CanSpawnMF2, CanSpawnMF3, CanSpawnMF4, CanSpawnLF1, CanSpawnLF2, CanSpawnSW1, CanSpawnSW2, CanSpawnSW3, CanSpawnSW4, CanSpawnSW5, CanSpawnSW6, CanSpawnMW1, CanSpawnMW2, CanSpawnMW3, CanSpawnLW1, CanSpawnLW2;
-    public GameObject PlayAreaMain, PlayAreaHead, Player, CameraObject, ItemSpawn, Backpack, weightBar;
+    public int foodSpawnS, FoodSpawnM, FoodSpawnL, WaterSpawnS, WaterSpawnM, WaterSpawnL, CardSpawn, NoteSpawn, Roll, ItemLocation, pickupID;
+    [SerializeField] bool SpecialSpawnW, SpecialSpawnF, CanSpawnSF1, CanSpawnSF2, CanSpawnSF3, CanSpawnSF4, CanSpawnSF5, CanSpawnSF6, CanSpawnMF1, CanSpawnMF2, CanSpawnMF3, CanSpawnMF4, CanSpawnLF1, CanSpawnLF2, CanSpawnSW1, CanSpawnSW2, CanSpawnSW3, CanSpawnSW4, CanSpawnSW5, CanSpawnSW6, CanSpawnMW1, CanSpawnMW2, CanSpawnMW3, CanSpawnLW1, CanSpawnLW2;
+    public GameObject PlayAreaMain, PlayAreaHead, Player, CameraObject, itemSpawn, Backpack, weightBar, exitZone;
     Vector3 FoodS1, FoodS2, FoodS3, FoodS4, FoodS5, FoodS6, FoodM1, FoodM2, FoodM3, FoodM4, FoodL1, FoodL2, WaterS1, WaterS2, WaterS3, WaterS4, WaterS5, WaterS6, WaterM1, WaterM2, WaterM3, WaterL1, WaterL2;
     public Camera myCamera;
     public Sprite Default;
-    public TextMesh Countdown;
+    public TextMesh Countdown, ItemsCollected;
     void Start()
     {
         Application.targetFrameRate = 60;
@@ -33,6 +34,7 @@ public class GameManager : MonoBehaviour
 
         if (GameState == "Reset")
         {
+            print("reset state");
             SetUp();
         }
 
@@ -45,14 +47,14 @@ public class GameManager : MonoBehaviour
 
         if (GameState == "Playable")
         {
-            TimeKeeper();
+            UserInterface();
             InvManager();
             PlayerControls();
             PlayerCollision();
         }
     }
 
-    private void TimeKeeper()
+    private void UserInterface()
     {
         frameCount++;
         if (frameCount == 60)
@@ -62,6 +64,8 @@ public class GameManager : MonoBehaviour
         }
 
         Countdown.text = ($"Time:{Timer}");
+
+        ItemsCollected.text = ($"Food Collected: {Food} \nWater Collected: {Water}");
     }
 
     private void Spawns()
@@ -70,22 +74,22 @@ public class GameManager : MonoBehaviour
         if (foodSpawnS > 0)
         {
             foodSpawnS--;
-            Roll = Random.Range(1, 101);
-            if (Roll < 67)
+            /*Roll = Random.Range(1, 101);
+            if (Roll < 67)*/
             {
-                ItemSpawn = new GameObject("SmallFood");
-                ItemSpawn.AddComponent<SpriteRenderer>();
-                ItemSpawn.AddComponent<SmallF>();
-                ItemSpawn.GetComponent<SpriteRenderer>().sprite = Default; //Change sprite
-                ItemSpawn.GetComponent<SpriteRenderer>().color = new Color(0, 1, 0, 1);
+                itemSpawn = new GameObject("SmallFood");
+                itemSpawn.AddComponent<SpriteRenderer>();
+                itemSpawn.AddComponent<SmallF>();
+                itemSpawn.GetComponent<SpriteRenderer>().sprite = Default; //Change sprite
+                itemSpawn.GetComponent<SpriteRenderer>().color = new Color(0, 1, 0, 1);
                 ItemLocation = Random.Range(1, 7);
 
-                SpawnLocation(1, CanSpawnSF1, FoodS1, foodSpawnS);
-                SpawnLocation(2, CanSpawnSF2, FoodS2, foodSpawnS);
-                SpawnLocation(3, CanSpawnSF3, FoodS3, foodSpawnS);
-                SpawnLocation(4, CanSpawnSF4, FoodS4, foodSpawnS);
-                SpawnLocation(5, CanSpawnSF5, FoodS5, foodSpawnS);
-                SpawnLocation(6, CanSpawnSF6, FoodS6, foodSpawnS);
+                CanSpawnSF1 = SpawnLocation(1, CanSpawnSF1, FoodS1, foodSpawnS);
+                CanSpawnSF2 = SpawnLocation(2, CanSpawnSF2, FoodS2, foodSpawnS);
+                CanSpawnSF3 = SpawnLocation(3, CanSpawnSF3, FoodS3, foodSpawnS);
+                CanSpawnSF4 = SpawnLocation(4, CanSpawnSF4, FoodS4, foodSpawnS);
+                CanSpawnSF5 = SpawnLocation(5, CanSpawnSF5, FoodS5, foodSpawnS);
+                CanSpawnSF6 = SpawnLocation(6, CanSpawnSF6, FoodS6, foodSpawnS);
             }
         }
 
@@ -96,17 +100,17 @@ public class GameManager : MonoBehaviour
             Roll = Random.Range(1, 101);
             if (Roll < 31)
             {
-                ItemSpawn = new GameObject("MediumFood");
-                ItemSpawn.AddComponent<SpriteRenderer>();
-                ItemSpawn.AddComponent<MediumF>();
-                ItemSpawn.GetComponent<SpriteRenderer>().sprite = Default; //Change sprite
-                ItemSpawn.GetComponent<SpriteRenderer>().color = new Color(1, 0.5f, 0, 1);
+                itemSpawn = new GameObject("MediumFood");
+                itemSpawn.AddComponent<SpriteRenderer>();
+                itemSpawn.AddComponent<MediumF>();
+                itemSpawn.GetComponent<SpriteRenderer>().sprite = Default; //Change sprite
+                itemSpawn.GetComponent<SpriteRenderer>().color = new Color(1, 0.5f, 0, 1);
                 ItemLocation = Random.Range(1, 5);
 
-                SpawnLocation(1, CanSpawnMF1, FoodM1, FoodSpawnM);
-                SpawnLocation(2, CanSpawnMF2, FoodM2, FoodSpawnM);
-                SpawnLocation(3, CanSpawnMF3, FoodM3, FoodSpawnM);
-                SpawnLocation(4, CanSpawnMF4, FoodM4, FoodSpawnM);
+                CanSpawnMF1 = SpawnLocation(1, CanSpawnMF1, FoodM1, FoodSpawnM);
+                CanSpawnMF2 = SpawnLocation(2, CanSpawnMF2, FoodM2, FoodSpawnM);
+                CanSpawnMF3 = SpawnLocation(3, CanSpawnMF3, FoodM3, FoodSpawnM);
+                CanSpawnMF4 = SpawnLocation(4, CanSpawnMF4, FoodM4, FoodSpawnM);
             }
         }
 
@@ -117,15 +121,15 @@ public class GameManager : MonoBehaviour
             Roll = Random.Range(1, 101);
             if (Roll < 81)
             {
-                ItemSpawn = new GameObject("LargeFood");
-                ItemSpawn.AddComponent<SpriteRenderer>();
-                ItemSpawn.AddComponent<LargeF>();
-                ItemSpawn.GetComponent<SpriteRenderer>().sprite = Default; //Change sprite
-                ItemSpawn.GetComponent<SpriteRenderer>().color = new Color(0.6f, 0.7f, 0, 1);
+                itemSpawn = new GameObject("LargeFood");
+                itemSpawn.AddComponent<SpriteRenderer>();
+                itemSpawn.AddComponent<LargeF>();
+                itemSpawn.GetComponent<SpriteRenderer>().sprite = Default; //Change sprite
+                itemSpawn.GetComponent<SpriteRenderer>().color = new Color(0.6f, 0.7f, 0, 1);
                 ItemLocation = Random.Range(1, 3);
 
-                SpawnLocation(1, CanSpawnLF1, FoodL1, FoodSpawnL);
-                SpawnLocation(2, CanSpawnLF2, FoodL2, FoodSpawnL);
+                CanSpawnLF1 = SpawnLocation(1, CanSpawnLF1, FoodL1, FoodSpawnL);
+                CanSpawnLF2 = SpawnLocation(2, CanSpawnLF2, FoodL2, FoodSpawnL);
             }
         }
 
@@ -133,22 +137,22 @@ public class GameManager : MonoBehaviour
         if (WaterSpawnS > 0)
         {
             WaterSpawnS--;
-            Roll = Random.Range(1, 101);
-            if (Roll < 76)
+            /*Roll = Random.Range(1, 101);
+            if (Roll < 76)*/
             {
-                ItemSpawn = new GameObject("SmallWater");
-                ItemSpawn.AddComponent<SpriteRenderer>();
-                ItemSpawn.AddComponent<SmallW>();
-                ItemSpawn.GetComponent<SpriteRenderer>().sprite = Default; //Change sprite
-                ItemSpawn.GetComponent<SpriteRenderer>().color = new Color(0, 0.7f, 1, 1);
+                itemSpawn = new GameObject("SmallWater");
+                itemSpawn.AddComponent<SpriteRenderer>();
+                itemSpawn.AddComponent<SmallW>();
+                itemSpawn.GetComponent<SpriteRenderer>().sprite = Default; //Change sprite
+                itemSpawn.GetComponent<SpriteRenderer>().color = new Color(0, 0.7f, 1, 1);
                 ItemLocation = Random.Range(1, 7);
 
-                SpawnLocation(1, CanSpawnSW1, WaterS1, WaterSpawnS);
-                SpawnLocation(2, CanSpawnSW2, WaterS2, WaterSpawnS);
-                SpawnLocation(3, CanSpawnSW3, WaterS3, WaterSpawnS);
-                SpawnLocation(4, CanSpawnSW4, WaterS4, WaterSpawnS);
-                SpawnLocation(5, CanSpawnSW5, WaterS5, WaterSpawnS);
-                SpawnLocation(6, CanSpawnSW6, WaterS6, WaterSpawnS);
+                CanSpawnSW1 = SpawnLocation(1, CanSpawnSW1, WaterS1, WaterSpawnS);
+                CanSpawnSW2 = SpawnLocation(2, CanSpawnSW2, WaterS2, WaterSpawnS);
+                CanSpawnSW3 = SpawnLocation(3, CanSpawnSW3, WaterS3, WaterSpawnS);
+                CanSpawnSW4 = SpawnLocation(4, CanSpawnSW4, WaterS4, WaterSpawnS);
+                CanSpawnSW5 = SpawnLocation(5, CanSpawnSW5, WaterS5, WaterSpawnS);
+                CanSpawnSW6 = SpawnLocation(6, CanSpawnSW6, WaterS6, WaterSpawnS);
             }
         }
         //Medium Water (50% Chance)
@@ -158,17 +162,17 @@ public class GameManager : MonoBehaviour
             Roll = Random.Range(1, 101);
             if (Roll < 51)
             {
-                ItemSpawn = new GameObject("MediumWater");
-                ItemSpawn.AddComponent<SpriteRenderer>();
-                ItemSpawn.AddComponent<MediumW>();
-                ItemSpawn.GetComponent<SpriteRenderer>().sprite = Default; //Change sprite
-                ItemSpawn.GetComponent<SpriteRenderer>().color = new Color(0, 0, 1, 1); 
+                itemSpawn = new GameObject("MediumWater");
+                itemSpawn.AddComponent<SpriteRenderer>();
+                itemSpawn.AddComponent<MediumW>();
+                itemSpawn.GetComponent<SpriteRenderer>().sprite = Default; //Change sprite
+                itemSpawn.GetComponent<SpriteRenderer>().color = new Color(0, 0, 1, 1); 
                 ItemLocation = Random.Range(1, 4);
 
-                
-                SpawnLocation(1, CanSpawnMW1, WaterM1, WaterSpawnM);
-                SpawnLocation(2, CanSpawnMW2, WaterM2, WaterSpawnM);
-                SpawnLocation(3, CanSpawnMW3, WaterM3, WaterSpawnM);
+
+                CanSpawnMW1 = SpawnLocation(1, CanSpawnMW1, WaterM1, WaterSpawnM);
+                CanSpawnMW2 = SpawnLocation(2, CanSpawnMW2, WaterM2, WaterSpawnM);
+                CanSpawnMW3 = SpawnLocation(3, CanSpawnMW3, WaterM3, WaterSpawnM);
             }
         }
         
@@ -180,15 +184,15 @@ public class GameManager : MonoBehaviour
             if (Roll < 91)
             {
                 print("waterL");
-                ItemSpawn = new GameObject("LargeWater");
-                ItemSpawn.AddComponent<SpriteRenderer>();
-                ItemSpawn.AddComponent<LargeW>();
-                ItemSpawn.GetComponent<SpriteRenderer>().sprite = Default; //Change sprite
-                ItemSpawn.GetComponent<SpriteRenderer>().color = new Color(0.3f, 0, 1f, 1);
+                itemSpawn = new GameObject("LargeWater");
+                itemSpawn.AddComponent<SpriteRenderer>();
+                itemSpawn.AddComponent<LargeW>();
+                itemSpawn.GetComponent<SpriteRenderer>().sprite = Default; //Change sprite
+                itemSpawn.GetComponent<SpriteRenderer>().color = new Color(0.3f, 0, 1f, 1);
                 ItemLocation = Random.Range(1, 3);
 
-                SpawnLocation(1, CanSpawnLW1, WaterL1, WaterSpawnL);
-                SpawnLocation(2, CanSpawnLW2, WaterL2, WaterSpawnL);
+                CanSpawnLW1 = SpawnLocation(1, CanSpawnLW1, WaterL1, WaterSpawnL);
+                CanSpawnLW1 = SpawnLocation(2, CanSpawnLW2, WaterL2, WaterSpawnL);
             }
     
             //Notes (33% Chance)
@@ -204,10 +208,10 @@ public class GameManager : MonoBehaviour
     {
         Food = 0;
         Water = 0;
-        foodSpawnS = 6;
+        foodSpawnS = 4;
         FoodSpawnM = 4;
         FoodSpawnL = 2;
-        WaterSpawnS = 6;
+        WaterSpawnS = 4;
         WaterSpawnM = 4;
         WaterSpawnL = 2;
         CardSpawn = 3;
@@ -241,20 +245,22 @@ public class GameManager : MonoBehaviour
         Timer = 12;
         frameCount = 0;
         carryWeight = 0;
+        pickupID = 1;
         GameState = "Spawns";
     }
 
-    private void SpawnLocation(int _randomLocation, bool _canSpawn, Vector3 _spawnLocation, int spawnType)
+    private bool SpawnLocation(int _randomLocation, bool _canSpawn, Vector3 _spawnLocation, int spawnType)
     {
         if (ItemLocation == _randomLocation)
         {
             if (_canSpawn == true)
             {
-                ItemSpawn.transform.position = _spawnLocation;
+                itemSpawn.transform.position = _spawnLocation;
                 _canSpawn = false;
             }
-            else if (_canSpawn == false) spawnType++;
+            else spawnType++;
         }
+            return _canSpawn;
     }
     private void InvManager()
     {
@@ -290,6 +296,16 @@ public class GameManager : MonoBehaviour
         {
             CameraObject.transform.position = new Vector3(Player.transform.position.x, 0, -10);
         }
+
+        //Direction Facing
+        if (Input.GetKey(KeyCode.W)) facing = "N";
+        if (Input.GetKey(KeyCode.D)) facing = "E";
+        if (Input.GetKey(KeyCode.S)) facing = "S";
+        if (Input.GetKey(KeyCode.A)) facing = "A";
+        if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.D)) facing = "NE";
+        if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.D)) facing = "SE";
+        if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.A)) facing = "SW";
+        if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.A)) facing = "NW";
     }
 
     private void PlayerCollision()
