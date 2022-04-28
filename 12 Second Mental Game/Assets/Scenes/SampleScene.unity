@@ -226,6 +226,7 @@ GameObject:
   - component: {fileID: 411428533}
   - component: {fileID: 411428535}
   - component: {fileID: 411428534}
+  - component: {fileID: 411428536}
   m_Layer: 0
   m_Name: Items Collected
   m_TagString: Untagged
@@ -265,7 +266,7 @@ TextMesh:
   m_Alignment: 0
   m_TabSize: 4
   m_FontSize: 70
-  m_FontStyle: 0
+  m_FontStyle: 1
   m_RichText: 1
   m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
   m_Color:
@@ -310,6 +311,17 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!210 &411428536
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 411428532}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 7
 --- !u!1 &414192471
 GameObject:
   m_ObjectHideFlags: 0
@@ -748,6 +760,7 @@ GameObject:
   - component: {fileID: 737840194}
   - component: {fileID: 737840193}
   - component: {fileID: 737840192}
+  - component: {fileID: 737840195}
   m_Layer: 0
   m_Name: Timer
   m_TagString: Untagged
@@ -776,7 +789,7 @@ TextMesh:
   m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
   m_Color:
     serializedVersion: 2
-    rgba: 4278190080
+    rgba: 4283039927
 --- !u!23 &737840193
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -830,6 +843,17 @@ Transform:
   m_Father: {fileID: 519420032}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!210 &737840195
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 737840191}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 7
 --- !u!1 &766703946
 GameObject:
   m_ObjectHideFlags: 0
