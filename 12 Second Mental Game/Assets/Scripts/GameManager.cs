@@ -52,6 +52,11 @@ public class GameManager : MonoBehaviour
             PlayerControls();
             PlayerCollision();
         }
+
+        if (GameState == "Result")
+        {
+
+        }
     }
 
     private void UserInterface()
@@ -247,6 +252,11 @@ public class GameManager : MonoBehaviour
         carryWeight = 0;
         pickupID = 1;
         GameState = "Spawns";
+    }
+
+    private void GameEnd()
+    {
+
     }
 
     private bool SpawnLocation(int _randomLocation, bool _canSpawn, Vector3 _spawnLocation, int spawnType)
