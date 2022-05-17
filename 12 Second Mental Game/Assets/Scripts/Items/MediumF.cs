@@ -8,8 +8,9 @@ public class MediumF : MonoBehaviour
     public string currentState;//Set, Holding, Thrown, Collected
     private float itemValue = 3.5f, randomX, randomY;
     private int itemWeight = 7;
-    private int pickupOrder;
+    public int pickupOrder;
     private int throwTime;
+    private string throwDir;
     private Bounds offset;
     bool invSet, carrying;
     // Start is called before the first frame update
@@ -18,7 +19,7 @@ public class MediumF : MonoBehaviour
         reftoManager = FindObjectOfType<GameManager>();
         currentState = "Set";
         offset = this.GetComponent<SpriteRenderer>().bounds;
-        offset.Expand(0.3f);
+        offset.Expand(0.1f);
         invSet = false;
         carrying = false;
     }
@@ -26,8 +27,6 @@ public class MediumF : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (currentState == "Set" && this.transform.position == new Vector3(0, 0, 0)) Destroy(this.gameObject);
-
         //colission detection
         if (reftoManager.Player.GetComponent<SpriteRenderer>().bounds.Intersects(offset)) print("touching");
 
@@ -52,7 +51,7 @@ public class MediumF : MonoBehaviour
             carrying = false;
         }
         if (currentState == "Holding") GetComponent<SpriteRenderer>().sortingOrder = 8;
-        else GetComponent<SpriteRenderer>().sortingOrder = 0;
+        else GetComponent<SpriteRenderer>().sortingOrder = 4;
 
         //Carrying Items
         if (currentState == "Holding")
@@ -73,6 +72,7 @@ public class MediumF : MonoBehaviour
             invSet = false;
             reftoManager.pickupID--;
             throwTime = 15;
+            throwDir = reftoManager.facing;
             this.transform.position = new Vector3(reftoManager.Player.transform.position.x, reftoManager.Player.transform.position.y, reftoManager.Player.transform.position.z);
             currentState = "Thrown";
         }
@@ -81,19 +81,25 @@ public class MediumF : MonoBehaviour
         if (currentState == "Thrown" && throwTime > 0)
         {
             throwTime--;
-            if (reftoManager.facing == "N") this.transform.position += new Vector3(0, 0.3f, 0);
-            if (reftoManager.facing == "E") this.transform.position += new Vector3(0.3f, 0, 0);
-            if (reftoManager.facing == "S") this.transform.position -= new Vector3(0, 0.3f, 0);
-            if (reftoManager.facing == "W") this.transform.position -= new Vector3(0.3f, 0, 0);
-            if (reftoManager.facing == "NE") this.transform.position += new Vector3(0.3f, 0.3f, 0);
-            if (reftoManager.facing == "SE") this.transform.position += new Vector3(0.3f, -0.3f, 0);
-            if (reftoManager.facing == "SW") this.transform.position += new Vector3(-0.3f, -0.3f, 0);
-            if (reftoManager.facing == "NW") this.transform.position += new Vector3(-0.3f, 0.3f, 0);
+            if (throwDir == "N") this.transform.position += new Vector3(0, 0.3f, 0);
+            if (throwDir == "E") this.transform.position += new Vector3(0.3f, 0, 0);
+            if (throwDir == "S") this.transform.position -= new Vector3(0, 0.3f, 0);
+            if (throwDir == "W") this.transform.position -= new Vector3(0.3f, 0, 0);
+            if (throwDir == "NE") this.transform.position += new Vector3(0.3f, 0.3f, 0);
+            if (throwDir == "SE") this.transform.position += new Vector3(0.3f, -0.3f, 0);
+            if (throwDir == "SW") this.transform.position += new Vector3(-0.3f, -0.3f, 0);
+            if (throwDir == "NW") this.transform.position += new Vector3(-0.3f, 0.3f, 0);
         }
-        if (currentState == "Thrown" && throwTime == 0) currentState = "Set";
+        if (currentState == "Thrown" && throwTime == 0)
+        {
+            currentState = "Set";
+
+            Start();
+        }
 
         if (this.GetComponent<SpriteRenderer>().bounds.Intersects(reftoManager.exitZone.GetComponent<SpriteRenderer>().bounds) && currentState == "Thrown")
         {
+            if (carrying == true) reftoManager.carryWeight = reftoManager.carryWeight -= itemWeight;
             reftoManager.Food = reftoManager.Food + itemValue;
             currentState = "Collected";
         }
