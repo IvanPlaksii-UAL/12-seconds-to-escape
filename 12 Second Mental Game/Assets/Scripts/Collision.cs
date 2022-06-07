@@ -22,7 +22,7 @@ public class Collision : MonoBehaviour
         {
             if (reftoManager.Player.GetComponent<SpriteRenderer>().bounds.Intersects(this.GetComponent<SpriteRenderer>().bounds))
             {
-                reftoManager.Player.transform.position -= new Vector3(0.35f, 0, 0);
+                reftoManager.Player.transform.position -= new Vector3(0.3f, 0, 0);
                 print("left");
             }
         }
@@ -32,7 +32,7 @@ public class Collision : MonoBehaviour
         {
             if (reftoManager.Player.GetComponent<SpriteRenderer>().bounds.Intersects(this.GetComponent<SpriteRenderer>().bounds))
             {
-                reftoManager.Player.transform.position += new Vector3(0.35f, 0, 0);
+                reftoManager.Player.transform.position += new Vector3(0.3f, 0, 0);
                 print("right");
             }
         }
@@ -46,7 +46,7 @@ public class Collision : MonoBehaviour
                 if (reftoManager.Player.GetComponent<SpriteRenderer>().bounds.Intersects(this.GetComponent<SpriteRenderer>().bounds))
                 {
                     print("top");
-                    reftoManager.Player.transform.position -= new Vector3(0, 0.35f, 0);
+                    reftoManager.Player.transform.position -= new Vector3(0, 0.3f, 0);
                 }
             }
         }
@@ -58,7 +58,7 @@ public class Collision : MonoBehaviour
                 if (reftoManager.Player.GetComponent<SpriteRenderer>().bounds.Intersects(this.GetComponent<SpriteRenderer>().bounds))
                 {
                     print("bottom");
-                    reftoManager.Player.transform.position += new Vector3(0, 0.35f, 0);
+                    reftoManager.Player.transform.position += new Vector3(0, 0.3f, 0);
                 }
             }
         }
