@@ -10,25 +10,25 @@ public class GameManager : MonoBehaviour
     public int daysSurvived, highScore, frameCount, Timer;
     public int foodSpawnS, FoodSpawnM, FoodSpawnL, WaterSpawnS, WaterSpawnM, WaterSpawnL, CardSpawn, Roll, ItemLocation, pickupID;
     [SerializeField] bool specialSpawnW, SpecialSpawnF, CanSpawnSF1, CanSpawnSF2, CanSpawnSF3, CanSpawnSF4, CanSpawnSF5, CanSpawnSF6, CanSpawnMF1, CanSpawnMF2, CanSpawnMF3, CanSpawnMF4, CanSpawnLF1, CanSpawnLF2, CanSpawnSW1, CanSpawnSW2, CanSpawnSW3, CanSpawnSW4, CanSpawnSW5, CanSpawnSW6, CanSpawnMW1, CanSpawnMW2, CanSpawnMW3, CanSpawnLW1, CanSpawnLW2;
-    public GameObject PlayAreaMain, PlayAreaHead, Player, CameraObject, itemSpawn, Backpack, weightBar, exitZone;
+    public GameObject PlayAreaMain, PlayAreaHead, Player, CameraObject, itemSpawn, Backpack, weightBar, exitZone, menuOverlay;
     private Vector3 FoodS1, FoodS2, FoodS3, FoodS4, FoodS5, FoodS6, FoodM1, FoodM2, FoodM3, FoodM4, FoodL1, FoodL2, WaterS1, WaterS2, WaterS3, WaterS4, WaterS5, WaterS6, WaterM1, WaterM2, WaterM3, WaterL1, WaterL2;
     public Camera myCamera;
     public Sprite Default, smallF, smallW, mediumF, mediumW, largeF, largeW;
-    public TextMesh Countdown, ItemsCollected;
+    public TextMesh Countdown, ItemsCollected, gameOver, weightText;
     void Start()
     {
         Application.targetFrameRate = 60;
         QualitySettings.vSyncCount = 2;
         GameState = "Reset";
         highScore = 0; 
-        moveSpeed = 0.35f;
+        moveSpeed = 0.3f;
         SpawnPositionSet();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.R)) GameState = "Reset";
+        //if (Input.GetKeyDown(KeyCode.R)) GameState = "Reset";
 
         if (GameState == "Menu")
         {
@@ -37,7 +37,6 @@ public class GameManager : MonoBehaviour
 
         if (GameState == "Reset")
         {
-            print("reset state");
             SetUp();
         }
 
@@ -50,11 +49,20 @@ public class GameManager : MonoBehaviour
 
         if (GameState == "Playable")
         {
+            if (Timer == 0)
+            {
+                //1 day = 1.6 food and 2 water
+                //daysSurvived = 
+                if (Food >= 8 && Water >= 10) GameState = "Win";
+                else GameState = "Loss";
+            }
             UserInterface();
             InvManager();
             PlayerControls();
             PlayerCollision();
         }
+
+        GameEnd();
     }
 
     private void UserInterface()
@@ -68,15 +76,29 @@ public class GameManager : MonoBehaviour
 
         Countdown.text = ($"Time:{Timer}");
 
-        ItemsCollected.text = ($"Food Collected: {Food} \nWater Collected: {Water}");
+        ItemsCollected.text = ($"Food: {Food}/8 \nWater: {Water}/10");
+
+        if (GameState == "Menu" || GameState == "Win" || GameState == "Loss")
+        {
+            menuOverlay.transform.position = new Vector3(myCamera.transform.position.x, 0, 0);
+        }
+        else menuOverlay.transform.position = new Vector3(30, 0, 0); 
     }
 
     private void GameEnd()
     {
-        if (Timer == 0)
+        if (GameState == "Win")
         {
-            if (Food >= 8 && Water >= 10) GameState = "Win";
-            else GameState = "Loss"; 
+            gameOver.text = "YOU SURVIVED!\n\n PRESS R TO RESET";
+            gameOver.color = Color.blue;
+            if (Input.GetKeyDown(KeyCode.R)) GameState = "Reset";
+        }
+
+        if (GameState == "Loss")
+        {
+            gameOver.text = "YOU DIED\n\n PRESS R TO RESET";
+            gameOver.color = Color.red;
+            if (Input.GetKeyDown(KeyCode.R)) GameState = "Reset";
         }
     }
 
@@ -201,6 +223,7 @@ public class GameManager : MonoBehaviour
     
     private void SetUp()
     {
+        Player.transform.position = new Vector3(0, 0, 0);
         Food = 0;
         Water = 0;
         foodSpawnS = 4;
@@ -264,6 +287,12 @@ public class GameManager : MonoBehaviour
     {
         weightBar.transform.localScale = new Vector3((5 * (carryWeight / 20)), 0.5f, 1);
 
+        if (carryWeight > 13) weightBar.GetComponent<SpriteRenderer>().color = Color.red;
+        else if (carryWeight > 7 && carryWeight < 13) weightBar.GetComponent<SpriteRenderer>().color = Color.yellow;
+        else weightBar.GetComponent<SpriteRenderer>().color = Color.green;
+
+
+        weightText.text = $"{carryWeight}/20";
         Backpack.transform.position = new Vector3(myCamera.transform.position.x + 9.5f, myCamera.transform.position.y - 4, myCamera.transform.position.z + 10);
     }
     private void PlayerControls()
@@ -304,6 +333,16 @@ public class GameManager : MonoBehaviour
         if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.D)) facing = "SE";
         if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.A)) facing = "SW";
         if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.A)) facing = "NW";
+
+        //Player Model Rotation 
+        if (facing == "N") Player.transform.eulerAngles = new Vector3(0,0,180);
+        if (facing == "E") Player.transform.eulerAngles = new Vector3(0, 0, 90);
+        if (facing == "S") Player.transform.eulerAngles = new Vector3(0, 0, 0);
+        if (facing == "W") Player.transform.eulerAngles = new Vector3(0, 0, 270);
+        if (facing == "NE") Player.transform.eulerAngles = new Vector3(0, 0, 135);
+        if (facing == "NW") Player.transform.eulerAngles = new Vector3(0, 0, 225);
+        if (facing == "SE") Player.transform.eulerAngles = new Vector3(0, 0, 45);
+        if (facing == "SW") Player.transform.eulerAngles = new Vector3(0, 0, 315);
     }
 
     private void PlayerCollision()

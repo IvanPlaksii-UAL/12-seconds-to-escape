@@ -12,6 +12,7 @@ public class MediumF : MonoBehaviour
     private int throwTime;
     private string throwDir;
     private Bounds offset;
+    GameObject infoBox;
     bool invSet, carrying;
     // Start is called before the first frame update
     void Start()
@@ -21,6 +22,7 @@ public class MediumF : MonoBehaviour
         offset = this.GetComponent<SpriteRenderer>().bounds;
         offset.Expand(0.1f);
         invSet = false;
+        InfoGeneration();
         carrying = false;
     }
 
@@ -104,6 +106,24 @@ public class MediumF : MonoBehaviour
             currentState = "Collected";
         }
 
-        if (currentState == "Collected") Destroy(this.gameObject);
+        if (currentState == "Collected" || reftoManager.GameState == "Reset") Destroy(this.gameObject);
+    }
+
+    private void InfoGeneration()
+    {
+        infoBox = new GameObject("InfoBox");
+        infoBox.AddComponent<Transform>();
+        infoBox.AddComponent<MeshRenderer>();
+        infoBox.AddComponent<TextMesh>();
+        infoBox.transform.parent = this.transform;
+        infoBox.transform.position = new Vector3(this.transform.position.x, this.transform.position.y - 1f, -1);
+        infoBox.GetComponent<TextMesh>().characterSize = 0.1f;
+        infoBox.GetComponent<TextMesh>().fontSize = 40;
+        infoBox.GetComponent<MeshRenderer>().sortingOrder = 8;
+        infoBox.GetComponent<TextMesh>().color = Color.gray;
+        infoBox.GetComponent<TextMesh>().anchor = TextAnchor.MiddleCenter;
+        infoBox.GetComponent<TextMesh>().alignment = TextAlignment.Center;
+        infoBox.GetComponent<TextMesh>().fontStyle = FontStyle.Bold;
+        infoBox.GetComponent<TextMesh>().text = ($"Value: {itemValue}\nWeight: {itemWeight}");
     }
 }
